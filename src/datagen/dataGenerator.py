@@ -27,9 +27,7 @@ IDs_set = set()
 
 
 def generate_ids():
-    while (len(IDs_set) < TOTAL_ENTRIES):
-        IDs_set.add(random.sample(range(1, TOTAL_ENTRIES), TOTAL_ENTRIES))
-    return IDs_set
+    return [i for i in range(USER_ENTRIES)]
 
 
 def generate_names_surnames():
