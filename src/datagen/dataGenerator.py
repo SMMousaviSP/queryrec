@@ -60,10 +60,12 @@ def generate_age():
     age_set = set()
     while (len(age_set) < TOTAL_ENTRIES):
         age = random.sample(range(30, 50), 1)
-        age_set.add()
+        age_set.add(age[0])
+
+    return age_set
 
 
-def generate_people(names, surnames, heights):
+def generate_people(names, surnames, heights, ages, city_names=city_names):
     with open('users.csv', 'w') as file:
         header = ['id', 'name', 'surname', 'height', 'age', 'city']
         writer = csv.writer(file)
@@ -74,15 +76,17 @@ def generate_people(names, surnames, heights):
                 random.sample(names, 1),
                 random.sample(surnames, 1),
                 random.sample(heights, 1),
+                random.sample(ages, 1),
                 random.sample(city_names, 1)]
             writer.writerow(data)
 
 
 def main():
-
     names, surnames = generate_names_surnames()
     heights = generate_heights()
-    generate_people(names, surnames, heights)
+    ages = generate_age()
+    generate_people(names, surnames, heights, ages)
 
 
-main()
+if __name__ == "__main__":
+    main()
