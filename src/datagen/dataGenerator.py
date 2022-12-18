@@ -1,9 +1,6 @@
 import csv
-import string
 import random
-import time
-import sys
-import io
+
 from faker import Faker
 
 # user entries is the number of users we want in the db
@@ -31,36 +28,18 @@ def generate_ids():
 
 
 def generate_names_surnames():
-    fake = Faker('en_US')
-    nameSet = set()
-    surnameSet = set()
-    while (len(nameSet) < TOTAL_ENTRIES and len(surnameSet) < TOTAL_ENTRIES):
-        mystring = fake.name().split()
-        name = mystring[0]
-        nameSet.add(name)
-
-        surname = mystring[1]
-        surnameSet.add(surname)
-
-    return nameSet, surnameSet
+    faker = Faker('en_US')
+    names = set(faker.unique.first_name() for i in range(TOTAL_ENTRIES))
+    surnames = set(faker.unique.last_name() for i in range(TOTAL_ENTRIES))
+    return names, surnames
 
 
 def generate_heights():
-    heights_set = set()
-    while (len(heights_set) < TOTAL_ENTRIES):
-        height = random.sample(range(150, 200), 1)
-        heights_set.add(height[0])
-
-    return heights_set
+    return set(random.sample(range(150, 200), TOTAL_ENTRIES))
 
 
 def generate_age():
-    age_set = set()
-    while (len(age_set) < TOTAL_ENTRIES):
-        age = random.sample(range(30, 50), 1)
-        age_set.add(age[0])
-
-    return age_set
+    return set(random.sample(range(30, 50), TOTAL_ENTRIES))
 
 
 def generate_people(names, surnames, heights, ages, city_names=city_names):
