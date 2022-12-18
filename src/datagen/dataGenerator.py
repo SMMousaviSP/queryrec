@@ -19,12 +19,9 @@ city_names = [
     "Bergamo",
     "Rovereto"]
 
-# ids not used, just use the index of the for as i
-IDs_set = set()
-
 
 def generate_ids():
-    return [i for i in range(USER_ENTRIES)]
+    return list(range(USER_ENTRIES))
 
 
 def generate_names_surnames():
@@ -42,14 +39,21 @@ def generate_age():
     return random.sample(range(30, 50), TOTAL_ENTRIES)
 
 
-def generate_people(names, surnames, heights, ages, city_names=city_names):
+def generate_people(
+    ids,
+    names,
+    surnames,
+    heights,
+    ages,
+    city_names=city_names
+):
     with open('users.csv', 'w') as file:
         header = ['id', 'name', 'surname', 'height', 'age', 'city']
         writer = csv.writer(file)
         writer.writerow(header)
         for i in range(0, USER_ENTRIES):
             data = [
-                i,
+                ids[i],
                 random.sample(names, 1)[0],
                 random.sample(surnames, 1)[0],
                 random.sample(heights, 1)[0],
@@ -60,10 +64,11 @@ def generate_people(names, surnames, heights, ages, city_names=city_names):
 
 
 def main():
+    ids = generate_ids()
     names, surnames = generate_names_surnames()
     heights = generate_heights()
     ages = generate_age()
-    generate_people(names, surnames, heights, ages)
+    generate_people(ids, names, surnames, heights, ages)
 
 
 if __name__ == "__main__":
