@@ -7,7 +7,7 @@ from faker import Faker
 USER_ENTRIES = 10
 # entries of each parameter, like 10 different cities, 10 different ages..
 TOTAL_ENTRIES = 10
-city_names = {
+city_names = [
     "Trento",
     "Bolzano",
     "Verona",
@@ -17,7 +17,7 @@ city_names = {
     "Torino",
     "Venezia",
     "Bergamo",
-    "Rovereto"}
+    "Rovereto"]
 
 # ids not used, just use the index of the for as i
 IDs_set = set()
@@ -29,17 +29,17 @@ def generate_ids():
 
 def generate_names_surnames():
     faker = Faker('en_US')
-    names = set(faker.unique.first_name() for i in range(TOTAL_ENTRIES))
-    surnames = set(faker.unique.last_name() for i in range(TOTAL_ENTRIES))
+    names = [faker.unique.first_name() for i in range(TOTAL_ENTRIES)]
+    surnames = [faker.unique.last_name() for i in range(TOTAL_ENTRIES)]
     return names, surnames
 
 
 def generate_heights():
-    return set(random.sample(range(150, 200), TOTAL_ENTRIES))
+    return random.sample(range(150, 200), TOTAL_ENTRIES)
 
 
 def generate_age():
-    return set(random.sample(range(30, 50), TOTAL_ENTRIES))
+    return random.sample(range(30, 50), TOTAL_ENTRIES)
 
 
 def generate_people(names, surnames, heights, ages, city_names=city_names):
