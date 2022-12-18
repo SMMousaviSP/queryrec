@@ -50,11 +50,12 @@ def generate_people(names, surnames, heights, ages, city_names=city_names):
         for i in range(0, USER_ENTRIES):
             data = [
                 i,
-                random.sample(names, 1),
-                random.sample(surnames, 1),
-                random.sample(heights, 1),
-                random.sample(ages, 1),
-                random.sample(city_names, 1)]
+                random.sample(names, 1)[0],
+                random.sample(surnames, 1)[0],
+                random.sample(heights, 1)[0],
+                random.sample(ages, 1)[0],
+                random.sample(city_names, 1)[0]
+            ]
             writer.writerow(data)
 
 
