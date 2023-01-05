@@ -91,26 +91,26 @@ def generate_query_set(ids, names, surnames, heights, ages):
             
             random_choice_for_params = random.randrange(0,100)
             # 50% chance to have name in query
-            if(random_choice_for_params >= 0 and random_choice_for_params <= 50):
+            if(random_choice_for_params <= 50):
                 data.append('name='+random.sample(names, 1)[0])
                 empty_query = False
 
             random_choice_for_params = random.randrange(0,100)
             # 40% chance to have surname in query
-            if(random_choice_for_params >= 0 and random_choice_for_params <= 40):
+            if(random_choice_for_params <= 40):
                 data.append('surname='+random.sample(surnames, 1)[0])
                 empty_query = False
 
             random_choice_for_params = random.randrange(0,100)
             # 30% chance to have height in query
-            if(random_choice_for_params >= 0 and random_choice_for_params <= 30):
+            if(random_choice_for_params <= 30):
                 data.append('height='+str(random.sample(heights, 1)[0]))
                 empty_query = False
                     
 
             random_choice_for_params = random.randrange(0,100)
             # 50% chance to have age in query
-            if(random_choice_for_params >= 0 and random_choice_for_params <= 50):
+            if(random_choice_for_params <= 50):
                 data.append('age='+str(random.sample(ages, 1)[0]))
                 empty_query = False
 
