@@ -14,7 +14,7 @@ def main():
     '''
     
 
-    '''for item in average:
+    '''for item in averageRating:
         print(item)
     '''
 
@@ -25,8 +25,21 @@ def main():
     #print(userQueryDisliked[100])
 
     similarity = jaccardSimilarity(likedQueries=userQueryLiked, dislikedQueries=userQueryDisliked,usersIDs=usersIDs)
-    for item in range(len(similarity)):
+    '''for item in range(len(similarity)):
         print(f'index: {item}, similarity: {similarity[item]}\n')
+    '''
+
+    queryToPredict = getQueriesToPredict(utilityMatrix=utilityMatrix, usersIDs=usersIDs)
+
+    #print(queryToPredict)
+
+    filledUtilityMatrix = userBasedCF(utilityMatrix=utilityMatrix, queriesToPredict=queryToPredict, usersSimilarity=similarity, usersIDs=usersIDs, topNusers=10, averageRating=averageRating)
+
+    '''with open('fullMatrix.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        for row in filledUtilityMatrix:
+            writer.writerow(row)
+    '''
     
 
 if __name__ == "__main__":
