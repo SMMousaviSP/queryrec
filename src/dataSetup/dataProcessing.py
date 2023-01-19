@@ -37,7 +37,7 @@ def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRat
     return userQueryLikedsDict, userQueryDislikedsDict
 
 
-def jaccardSimilarity(likedQueries, dislikedQueries, usersIDs):
+def jaccardSimilarity(likedQueries, dislikedQueries):
     totalSimilarity = []
     index = 0
 
@@ -109,6 +109,36 @@ def getQueriesToPredict(utilityMatrix, usersIDs):
             queryID += 1
     
     return queriesToPredict
+
+#def itemBasedCF(utilityMatrix, queriesToPredict,usersIDs, topNusers):
+
+def generateLikeDislikeDictForItems(usersIDs, queryIDs, utilityMatrix, averageRating):
+    baseline = int(min(usersIDs))
+
+    itemLikedsDict = {}
+    itemDislikedsDict = {}
+    for item in queryIDs:
+        if int(item) not in itemLikedsDict:
+            itemLikedsDict[int(item)] = []
+
+        if int(item) not in itemDislikedsDict:
+            itemDislikedsDict[int(item)] = []
+
+    for row in utilityMatrix:
+        queryID = 0
+        numericUserID = "".join([x for x in row[0] if x.isdigit()])
+
+        for rating in row[1:]:
+            if(rating != ''):
+                if(int(rating) >= averageRating[int(numericUserID) - baseline]):
+                    itemLikedsDict[queryID].append(int(numericUserID))
+                else:
+                    itemDislikedsDict[queryID].append(int(numericUserID))
+            queryID += 1
+    
+    return itemLikedsDict, itemDislikedsDict
+
+        
 
 
 

@@ -24,7 +24,15 @@ def main():
     #print(userQueryLiked[100])
     #print(userQueryDisliked[100])
 
-    similarity = jaccardSimilarity(likedQueries=userQueryLiked, dislikedQueries=userQueryDisliked,usersIDs=usersIDs)
+    itemLiked, itemDisliked = generateLikeDislikeDictForItems(usersIDs=usersIDs, queryIDs=queryIDs, utilityMatrix=utilityMatrix, averageRating=averageRating)
+    #print(itemLiked)
+
+    itemSimilarity = jaccardSimilarity(likedQueries=itemLiked, dislikedQueries=itemDisliked)
+    '''for item in range(10):
+        print(f'index: {item}, similarity: {itemSimilarity[item]}\n')
+    '''
+
+    similarity = jaccardSimilarity(likedQueries=userQueryLiked, dislikedQueries=userQueryDisliked)
     '''for item in range(len(similarity)):
         print(f'index: {item}, similarity: {similarity[item]}\n')
     '''
