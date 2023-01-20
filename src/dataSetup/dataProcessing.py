@@ -110,7 +110,6 @@ def getQueriesToPredict(utilityMatrix, usersIDs):
     
     return queriesToPredict
 
-#def itemBasedCF(utilityMatrix, queriesToPredict,usersIDs, topNusers):
 
 def generateLikeDislikeDictForItems(usersIDs, queryIDs, utilityMatrix, averageRating):
     baseline = int(min(usersIDs))
@@ -139,6 +138,49 @@ def generateLikeDislikeDictForItems(usersIDs, queryIDs, utilityMatrix, averageRa
     return itemLikedsDict, itemDislikedsDict
 
         
+def itemBasedCF(utilityMatrix, queriesToPredict, itemSimilarity, usersIDs, topNitems, averageRating):
+    baseline = int(min(usersIDs))
+
+    for user in queriesToPredict:
+        if(len(queriesToPredict[user]) > 0):
+
+            for query in queriesToPredict[user]:
+                topNindexes = sorted(range(len(itemSimilarity[query])), key = lambda sub: itemSimilarity[sub])[-topNitems:]
+                #make new suggestion
+                suggestedResult = 0
+                #new users make a new weight sum
+                weightsSum = 0
+
+                for similarIndex in topNindexes:
+                    weight = itemSimilarity[query][similarIndex]
+                    rating = utilityMatrix[user - baseline][similarIndex + 1] 
+
+                    if(rating != ''):
+                        #print(f'rating: {rating}\nsimilarity: {weight}\nuserIndex: {similarIndex}\nuser: {user}\nqueryID: {query}\n')
+                        suggestedResult += weight * int(rating)
+                    
+                        weightsSum += weight
+
+                if(weightsSum > 0):
+                    #print('why would i be here?')
+                    #print(f'query: {query}\nMainUserID: {user}\ntotal: {suggestedResult}\ntotalWeight: {weightsSum}\n')
+                    suggestedResult /= weightsSum
+                    utilityMatrix[user - baseline][query + 1] = int(suggestedResult)
+
+                #if no similar user has rated the query and we know the average of the user, use that to predict the rating
+                elif(averageRating[user - baseline] > 0):
+                    #print('made the average\n')
+                    #print(f'query: {query}\nMainUserID: {user}\ntotal: {suggestedResult}\ntotalWeight: {weightsSum}\n')
+                    utilityMatrix[user - baseline][query + 1] = averageRating[user - baseline]
+
+
+                #if user has never rated any query, has average = -1, and if no similar user has rated the query, we use the random value approach
+                else:
+                    #print('random value')
+                    #print(f'query: {query}\nMainUserID: {user}\ntotal: {suggestedResult}\ntotalWeight: {weightsSum}\n')
+                    utilityMatrix[user - baseline][query + 1] = random.randint(0,100)
+                    #should update the average of the user, but not sure if worth it
+
 
 
 

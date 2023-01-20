@@ -43,6 +43,7 @@ def main():
 
     filledUtilityMatrix = userBasedCF(utilityMatrix=utilityMatrix, queriesToPredict=queryToPredict, usersSimilarity=similarity, usersIDs=usersIDs, topNusers=10, averageRating=averageRating)
 
+    filledUtilityMatrixWithItemCF = itemBasedCF(utilityMatrix=utilityMatrix, queriesToPredict=queryToPredict, itemSimilarity=itemSimilarity, usersIDs=usersIDs, topNitems=100, averageRating=averageRating)
     '''with open('fullMatrix.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         for row in filledUtilityMatrix:
