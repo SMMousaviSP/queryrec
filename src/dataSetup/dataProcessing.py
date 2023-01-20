@@ -2,39 +2,39 @@ import itertools
 import random
 
 def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRating):
-    #userQueryLikedsDict = dict.fromkeys(int(usersIDs))
-    #userQueryDislikedsDict = dict.fromkeys(int(usersIDs))
-    userQueryLikedsDict = {}
-    userQueryDislikedsDict = {}
+    #userQueryLikedDict = dict.fromkeys(int(usersIDs))
+    #userQueryDislikedDict = dict.fromkeys(int(usersIDs))
+    userQueryLikedDict = {}
+    userQueryDislikedDict = {}
     for item in usersIDs:
-        if int(item) not in userQueryLikedsDict:
-            userQueryLikedsDict[int(item)] = []
+        if item not in userQueryLikedDict:
+            userQueryLikedDict[item] = []
     
-    #print(userQueryLikedsDict)
+    #print(userQueryLikedDict)
 
     for item in usersIDs:
-        if int(item) not in userQueryDislikedsDict:
-            userQueryDislikedsDict[int(item)] = []
-    #print(userQueryDislikedsDict)
+        if item not in userQueryDislikedDict:
+            userQueryDislikedDict[item] = []
+    #print(userQueryDislikedDict)
 
     currentUser = 0
     currentQuery = 0
 
     for row in utilityMatrix:
         for item in row[1:]:
-            if(item != ''):
-                if(int(item) >= averageRating[currentUser]):
+            if(item):
+                if(item >= averageRating[currentUser]):
                     #print(item)
-                    userQueryLikedsDict[int(usersIDs[0]) + currentUser].append(queryIDs[currentQuery])
+                    userQueryLikedDict[usersIDs[0] + currentUser].append(queryIDs[currentQuery])
                 else:
                     #print(item)
-                    userQueryDislikedsDict[int(usersIDs[0]) + currentUser].append(queryIDs[currentQuery])
+                    userQueryDislikedDict[usersIDs[0] + currentUser].append(queryIDs[currentQuery])
             currentQuery += 1
 
         currentUser += 1
         currentQuery = 0
 
-    return userQueryLikedsDict, userQueryDislikedsDict
+    return userQueryLikedDict, userQueryDislikedDict
 
 
 def jaccardSimilarity(likedQueries, dislikedQueries):
