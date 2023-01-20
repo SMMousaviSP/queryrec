@@ -4,14 +4,17 @@ import os
 
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data'))
 
+# function to convert user's rating to int or None if there is no rating
+int_or_none = lambda x: int(x) if x else None
+
 
 def loadUserSet(userSetPath=os.path.join(DATA_PATH, 'Smalldataset', 'userSet.csv')):
     usersIDs = []
     with open(userSetPath, 'r', newline='') as userSetFile:
         reader = csv.reader(userSetFile, delimiter=',')
         for id in reader:
-            usersIDs.append(id[0])
-        
+            usersIDs.append(int(id[0]))
+
     return usersIDs
 
 def loadQueryIds(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
@@ -20,24 +23,26 @@ def loadQueryIds(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'util
         reader = csv.reader(utilityMatrixFile, delimiter=',')
         header = next(reader)
         queryIDs = header
-        
-    return queryIDs
+
+    return [int(i) for i in queryIDs]
 
 def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
     queryIDs = []
     data = []
     average = []
-    userAverage = 0
-    values = 0
     with open(utilityMatrixPath, 'r', newline='') as utilityMatrixFile:
         reader = csv.reader(utilityMatrixFile, delimiter=',')
         header = next(reader)
-        queryIDs = header
+        queryIDs = [int(i) for i in header]
 
         for row in reader:
-            for item in row:
-                if(not(item.startswith('u')) and item != ''):
-                    userAverage += int(item)
+            userAverage = 0
+            values = 0
+            # convert ratings to int or None if there is no rating
+            row = [row[0]] + [int_or_none(i) for i in row[1:]]
+            for rating in row[1:]:
+                if(rating):
+                    userAverage += rating
                     values += 1
 
             if(values == 0):
@@ -45,9 +50,6 @@ def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 
             else:
                 average.append(int(userAverage / values))
 
-            userAverage = 0
-            values = 0
             data.append(row)
-        
-        return queryIDs, data, average
 
+        return queryIDs, data, average
