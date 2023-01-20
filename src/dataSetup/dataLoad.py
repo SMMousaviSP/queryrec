@@ -1,30 +1,35 @@
 import csv
+import os
 
-def loadUserSet():
+
+DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data'))
+
+
+def loadUserSet(userSetPath=os.path.join(DATA_PATH, 'Smalldataset', 'userSet.csv')):
     usersIDs = []
-    with open('..\\..\\data\\Smalldataset\\userSet.csv', 'r', newline='') as userSetFile:
+    with open(userSetPath, 'r', newline='') as userSetFile:
         reader = csv.reader(userSetFile, delimiter=',')
         for id in reader:
             usersIDs.append(id[0])
         
     return usersIDs
 
-def loadQueryIds():
+def loadQueryIds(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
     queryIDs = []
-    with open('..\\..\\data\\Smalldataset\\utilityMatrix.csv', 'r', newline='') as utilityMatrixFile:
+    with open(utilityMatrixPath, 'r', newline='') as utilityMatrixFile:
         reader = csv.reader(utilityMatrixFile, delimiter=',')
         header = next(reader)
         queryIDs = header
         
     return queryIDs
 
-def loadUtilityMatrix():
+def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
     queryIDs = []
     data = []
     average = []
     userAverage = 0
     values = 0
-    with open('..\\..\\data\\Smalldataset\\utilityMatrix.csv', 'r', newline='') as utilityMatrixFile:
+    with open(utilityMatrixPath, 'r', newline='') as utilityMatrixFile:
         reader = csv.reader(utilityMatrixFile, delimiter=',')
         header = next(reader)
         queryIDs = header
