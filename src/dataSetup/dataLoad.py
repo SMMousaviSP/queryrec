@@ -33,13 +33,13 @@ def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 
     with open(utilityMatrixPath, 'r', newline='') as utilityMatrixFile:
         reader = csv.reader(utilityMatrixFile, delimiter=',')
         header = next(reader)
-        queryIDs = [int(i) for i in header]
+        queryIDs = [int(i) for i in header[1:]]
 
         for row in reader:
             userAverage = 0
             values = 0
             # convert ratings to int or None if there is no rating
-            row = [row[0]] + [int_or_none(i) for i in row[1:]]
+            row = [int_or_none(i) for i in row]
             for rating in row[1:]:
                 if(rating):
                     userAverage += rating
