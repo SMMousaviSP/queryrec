@@ -21,18 +21,15 @@ def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRat
     currentQuery = 0
 
     for row in utilityMatrix:
-        for item in row[1:]:
+        currentUser = row[0]
+        for item, currentQuery in zip(row[1:], queryIDs):
             if(item):
                 if(item >= averageRating[currentUser]):
                     #print(item)
-                    userQueryLikedDict[usersIDs[0] + currentUser].append(queryIDs[currentQuery])
+                    userQueryLikedDict[currentUser].append(queryIDs[currentQuery])
                 else:
                     #print(item)
-                    userQueryDislikedDict[usersIDs[0] + currentUser].append(queryIDs[currentQuery])
-            currentQuery += 1
-
-        currentUser += 1
-        currentQuery = 0
+                    userQueryDislikedDict[currentUser].append(queryIDs[currentQuery])
 
     return userQueryLikedDict, userQueryDislikedDict
 
