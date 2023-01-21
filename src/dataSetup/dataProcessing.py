@@ -80,28 +80,23 @@ def jaccardSimilarity(likedQueries, dislikedQueries):
         index += 1
     return totalSimilarity
 
-def getQueriesToPredict(utilityMatrix, usersIDs):
-    queryID = 0
-
-    #init of dict, might be a bit inefficent when we have many rows entirely filled, but it's very unlikely
+def getQueriesToPredict(utilityMatrix, queryIDs):
+    # Dictionary of users and the queries they have not rated
     queriesToPredict = {}
-    for user in usersIDs:
-        if int(user) not in queriesToPredict:
-            queriesToPredict[int(user)] = []
 
     for row in utilityMatrix:
-        queryID = 0
-        #get numerical part of user id of the row, this is a string
-        numericID = "".join([x for x in row[0] if x.isdigit()])
+        currentUser = row[0]
+        for rating, currentQuery in zip(row[1:], queryIDs):
+            # Check if the user has not rated the query
+            if(not rating):
+                try:
+                    queriesToPredict[currentUser].append(currentQuery)
+                # If the user is not in the dictionary, add them
+                except KeyError:
+                    queriesToPredict[currentUser] = [currentQuery]
 
-        #row[1:] to skip the user id in each row and get only the rating
-        for item in row[1:]:
-            #if no rating add to list of to predict
-            if(item == ''):
-                queriesToPredict[int(numericID)].append(queryID)
-            queryID += 1
-    
     return queriesToPredict
+
 
         
 def itemBasedCF(utilityMatrix, queriesToPredict, itemSimilarity, usersIDs, topNitems, averageRating):
