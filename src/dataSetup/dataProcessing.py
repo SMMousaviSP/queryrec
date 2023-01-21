@@ -7,15 +7,8 @@ def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRat
     userQueryLikedDict = {}
     userQueryDislikedDict = {}
     for item in usersIDs:
-        if item not in userQueryLikedDict:
-            userQueryLikedDict[item] = []
-    
-    #print(userQueryLikedDict)
-
-    for item in usersIDs:
-        if item not in userQueryDislikedDict:
-            userQueryDislikedDict[item] = []
-    #print(userQueryDislikedDict)
+        userQueryLikedDict[item] = []
+        userQueryDislikedDict[item] = []
 
     currentUser = 0
     currentQuery = 0
