@@ -29,7 +29,7 @@ def loadQueryIds(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'util
 def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
     queryIDs = []
     data = []
-    average = []
+    average = {}
     with open(utilityMatrixPath, 'r', newline='') as utilityMatrixFile:
         reader = csv.reader(utilityMatrixFile, delimiter=',')
         header = next(reader)
@@ -40,15 +40,17 @@ def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 
             values = 0
             # convert ratings to int or None if there is no rating
             row = [int_or_none(i) for i in row]
+            currentUserId = row[0]
             for rating in row[1:]:
                 if(rating):
                     userAverage += rating
                     values += 1
 
             if(values == 0):
-                average.append(-1)
+                average[currentUserId] = -1
             else:
-                average.append(int(userAverage / values))
+                # Should it be integer?
+                average[currentUserId] = (userAverage / values)
 
             data.append(row)
 
