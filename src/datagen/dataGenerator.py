@@ -1,7 +1,11 @@
 import csv
 import random
+import os
 
 from faker import Faker
+
+
+ENV_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'env'))
 
 # user entries is the number of users we want in the db
 USER_ENTRIES = 200
@@ -52,9 +56,11 @@ def generate_people(
     surnames,
     heights,
     ages,
-    city_names=city_names
+    city_names=city_names,
+    dataPath=ENV_PATH
 ):
-    with open('src\\dataset\\usersData.csv', 'w', newline='') as file:
+    usersDataPath = os.path.join(dataPath, 'usersData.csv')
+    with open(usersDataPath, 'w', newline='') as file:
         header = ['id', 'name', 'surname', 'height', 'age', 'city']
         writer = csv.writer(file)
         writer.writerow(header)
@@ -73,8 +79,9 @@ def generate_people(
 generates the user set, the ids start from the number of users we have in the DB onward
 this is done to show that the users that pose the queries are not necessarily the ones stored in the DB
 '''
-def generate_user_set():
-    with open('src\\dataset\\userSet.csv', 'w', newline='') as file:
+def generate_user_set(dataPath=ENV_PATH):
+    userSetPath = os.path.join(dataPath, 'userSet.csv')
+    with open(userSetPath, 'w', newline='') as file:
         writer = csv.writer(file)
         ids = []
         for i in range(0, USER_POSING_ENTRIES):
@@ -83,8 +90,9 @@ def generate_user_set():
             ids.clear()
 
 
-def generate_query_set(ids, names, surnames, heights, ages):
-    with open('src\\dataset\\querySet.csv', 'w', newline='') as file:
+def generate_query_set(ids, names, surnames, heights, ages, dataPath=ENV_PATH):
+    querySetPath = os.path.join(dataPath, 'querySet.csv')
+    with open(querySetPath, 'w', newline='') as file:
         writer = csv.writer(file)
 
         for i in range(0, QUERY_ENTRIES):
@@ -134,17 +142,19 @@ def generate_query_set(ids, names, surnames, heights, ages):
             data.clear()
 
 
-def generate_utility_matrix():
+def generate_utility_matrix(dataPath=ENV_PATH):
     isEmpty = True
-    with open('src\\dataset\\utilityMatrix.csv', 'w', newline='') as file:
-        with open('src\\dataset\\querySet.csv',  'r', newline='') as myInput:
+    utilityMatrixPath = os.path.join(dataPath, 'utilityMatrix.csv')
+    querySetPath = os.path.join(dataPath, 'querySet.csv')
+    with open(utilityMatrixPath, 'w', newline='') as file:
+        with open(querySetPath,  'r', newline='') as myInput:
             reader = csv.reader(myInput, delimiter=',')
             writer = csv.writer(file)
-            header = list(range(QUERY_ENTRIES))
+            header = ['user_id'] + list(range(QUERY_ENTRIES))
             writer.writerow(header)
             for i in range(0, USER_POSING_ENTRIES):
                 #ids of user set starts from USER_POSING_ENTRIES
-                data = ['user'+str(i + USER_POSING_ENTRIES)]
+                data = [i + USER_POSING_ENTRIES]
                 for row in reader:
                     isEmpty = True
                     if(i < 30): #make first 30 users like queries that have names that start with R or D or J or S
@@ -200,13 +210,17 @@ def generate_utility_matrix():
 
 
 def main():
+    # Create env folder if it doesn't exist
+    if not os.path.exists(ENV_PATH):
+        os.makedirs(ENV_PATH)
+
     ids = generate_ids()
     names, surnames = generate_names_surnames()
     heights = generate_heights()
     ages = generate_age()
-    #generate_people(ids, names, surnames, heights, ages)
-    #generate_user_set()
-    #generate_query_set(ids, names, surnames, heights, ages)
+    generate_people(ids, names, surnames, heights, ages)
+    generate_user_set()
+    generate_query_set(ids, names, surnames, heights, ages)
     generate_utility_matrix()
 
 
