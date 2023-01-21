@@ -30,55 +30,40 @@ def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRat
     )
 
 
-def jaccardSimilarity(likedQueries, dislikedQueries):
-    totalSimilarity = []
-    index = 0
+def jaccardSimilarity(likedQueries, dislikedQueries, ids):
+    similarities = {}
 
-    #loop on all the ids of the users
-    for (likeKey, dislikeKey) in itertools.zip_longest(likedQueries, dislikedQueries):
-        userSimilarity = []
-        #loop on every user on liked and disliked queries
-        #make set of liked and disliked queries for each user
-        likedSet1 = set(likedQueries[likeKey])
-        dislikeSet1 = set(dislikedQueries[dislikeKey])
+    for id1 in ids:
+        similarities[id1] = {}
+        for id2 in ids:
+            liked_dict1 = set(likedQueries.get(id1, []))
+            disliked_dict1 = set(dislikedQueries.get(id1, []))
+            liked_dict2 = set(likedQueries.get(id2, []))
+            disliked_dict2 = set(dislikedQueries.get(id2, []))
 
-        # liked(user1) ∪ disliked(user1)
-        union1 = likedSet1.union(dislikeSet1)
-        #print(len(union1))
+            liked_intersection = liked_dict1.intersection(liked_dict2)
+            disliked_intersection = disliked_dict1.intersection(disliked_dict2)
 
-        #loop again on users from current user onward to compare
-        for (likeKey2, dislikeKey2) in itertools.zip_longest(likedQueries, dislikedQueries):
+            liked_union = liked_dict1.union(liked_dict2)
+            disliked_union = disliked_dict1.union(disliked_dict2)
 
-            #make set of liked and disliked queries for each user to compare
-            likedSet2 = set(likedQueries[likeKey2])
-            dislikeSet2 = set(dislikedQueries[dislikeKey2])
+            # (liked(dict1) ∩ liked(dict2)) ∪ (disliked(dict1) ∩ disliked(dict2))
+            # This is the numerator of jaccard similarity
+            union_of_intersections = liked_intersection.union(disliked_intersection)
 
-            # liked(user2) ∪ disliked(user2)
-            union2 = likedSet2.union(dislikeSet2)
-
-            # [ liked(user1) ∩ liked(user2) ]
-            likeIntersection = likedSet1.intersection(likedSet2)
-
-            #[ disliked(user1) ∩ disliked(user2)]
-            dislikeIntersection = dislikeSet1.intersection(dislikeSet2)
-
-            # { [ liked(user1) ∩ liked(user2) ]  ∪ [ disliked(user1) ∩ disliked(user2)] } /
-            # { [ liked(user1) ∪ liked(user2)    ∪   disliked(user1) ∪ disliked(user2)] }
-            if(len(union1) > 0  or len(union2) > 0): #if there is at least one item in the union set(at least 1 query has been posed)
-                userSimilarity.append(round(len(likeIntersection.union(dislikeIntersection)) / 
-                                            len(union1.union(union2))
-                                            ,2)
-                                    )
-                #to note that the diagonal will be full of 1 as each user perfectly equal to itself
-            else: #union set is empty, no queries have ever been posed by the user
-                #how do i act in this case? i think say they are completely different might backfire as we don't actually know if they are different
-                userSimilarity.append(-1)
-
+            # (liked(dict1) ∪ liked(dict2)) ∪ (disliked(dict1) ∪ disliked(dict2))
+            # This is the denominator of jaccard similarity
+            union_of_unions = liked_union.union(disliked_union)
             
-        #totalSimilarity[index] = userSimilarity
-        totalSimilarity.append(userSimilarity) 
-        index += 1
-    return totalSimilarity
+            try:
+                jaccard_similarity = len(union_of_intersections) / len(union_of_unions)
+            # If union_of_unions is zero, it means all of the sets were empty
+            except ZeroDivisionError:
+                jaccard_similarity = 0
+            similarities[id1][id2] = jaccard_similarity
+    
+    return similarities
+
 
 def getQueriesToPredict(utilityMatrix, queryIDs):
     # Dictionary of users and the queries they have not rated
@@ -98,7 +83,6 @@ def getQueriesToPredict(utilityMatrix, queryIDs):
     return queriesToPredict
 
 
-        
 def itemBasedCF(utilityMatrix, queriesToPredict, itemSimilarity, usersIDs, topNitems, averageRating):
     baseline = int(min(usersIDs))
 
@@ -141,8 +125,6 @@ def itemBasedCF(utilityMatrix, queriesToPredict, itemSimilarity, usersIDs, topNi
                     #print(f'query: {query}\nMainUserID: {user}\ntotal: {suggestedResult}\ntotalWeight: {weightsSum}\n')
                     utilityMatrix[user - baseline][query + 1] = random.randint(0,100)
                     #should update the average of the user, but not sure if worth it
-
-
 
 
 def userBasedCF(utilityMatrix, queriesToPredict, usersSimilarity, usersIDs, topNusers, averageRating): 
