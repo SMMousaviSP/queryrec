@@ -2,29 +2,32 @@ import itertools
 import random
 
 def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRating):
-    #userQueryLikedDict = dict.fromkeys(int(usersIDs))
-    #userQueryDislikedDict = dict.fromkeys(int(usersIDs))
-    userQueryLikedDict = {}
-    userQueryDislikedDict = {}
-    for item in usersIDs:
-        userQueryLikedDict[item] = []
-        userQueryDislikedDict[item] = []
+    # Dictionary of users and their liked and disliked queries
+    userQueryLikedDict = {key: [] for key in usersIDs}
+    userQueryDislikedDict = {key: [] for key in usersIDs}
 
-    currentUser = 0
-    currentQuery = 0
+    # Dictionary of queries and the users who liked and disliked them
+    queryUserLikedDict = {key: [] for key in queryIDs}
+    queryUserDislikedDict = {key: [] for key in queryIDs}
 
     for row in utilityMatrix:
         currentUser = row[0]
-        for item, currentQuery in zip(row[1:], queryIDs):
-            if(item):
-                if(item >= averageRating[currentUser]):
-                    #print(item)
+        for rating, currentQuery in zip(row[1:], queryIDs):
+            # Check if the user has rated the query
+            if(rating):
+                if(rating >= averageRating[currentUser]):
                     userQueryLikedDict[currentUser].append(queryIDs[currentQuery])
+                    queryUserLikedDict[currentQuery].append(currentUser)
                 else:
-                    #print(item)
                     userQueryDislikedDict[currentUser].append(queryIDs[currentQuery])
+                    queryUserDislikedDict[currentQuery].append(currentUser)
 
-    return userQueryLikedDict, userQueryDislikedDict
+    return (
+        userQueryLikedDict,
+        userQueryDislikedDict,
+        queryUserLikedDict,
+        queryUserDislikedDict
+    )
 
 
 def jaccardSimilarity(likedQueries, dislikedQueries):
@@ -99,33 +102,6 @@ def getQueriesToPredict(utilityMatrix, usersIDs):
             queryID += 1
     
     return queriesToPredict
-
-
-def generateLikeDislikeDictForItems(usersIDs, queryIDs, utilityMatrix, averageRating):
-    baseline = int(min(usersIDs))
-
-    itemLikedsDict = {}
-    itemDislikedsDict = {}
-    for item in queryIDs:
-        if int(item) not in itemLikedsDict:
-            itemLikedsDict[int(item)] = []
-
-        if int(item) not in itemDislikedsDict:
-            itemDislikedsDict[int(item)] = []
-
-    for row in utilityMatrix:
-        queryID = 0
-        numericUserID = "".join([x for x in row[0] if x.isdigit()])
-
-        for rating in row[1:]:
-            if(rating != ''):
-                if(int(rating) >= averageRating[int(numericUserID) - baseline]):
-                    itemLikedsDict[queryID].append(int(numericUserID))
-                else:
-                    itemDislikedsDict[queryID].append(int(numericUserID))
-            queryID += 1
-    
-    return itemLikedsDict, itemDislikedsDict
 
         
 def itemBasedCF(utilityMatrix, queriesToPredict, itemSimilarity, usersIDs, topNitems, averageRating):
