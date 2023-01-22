@@ -65,20 +65,19 @@ def jaccardSimilarity(likedQueries, dislikedQueries, ids):
     return similarities
 
 
-def getQueriesToPredict(utilityMatrix, queryIDs):
+def getQueriesToPredict(utilityMatrix):
     # Dictionary of users and the queries they have not rated
     queriesToPredict = {}
 
-    for row in utilityMatrix:
-        currentUser = row[0]
-        for rating, currentQuery in zip(row[1:], queryIDs):
+    for userId, ratings in utilityMatrix.items():
+        for queryId, rating in ratings.items():
             # Check if the user has not rated the query
             if(not rating):
                 try:
-                    queriesToPredict[currentUser].append(currentQuery)
+                    queriesToPredict[userId].append(queryId)
                 # If the user is not in the dictionary, add them
                 except KeyError:
-                    queriesToPredict[currentUser] = [currentQuery]
+                    queriesToPredict[userId] = [queryId]
 
     return queriesToPredict
 
