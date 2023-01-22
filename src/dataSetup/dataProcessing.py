@@ -1,7 +1,7 @@
-import itertools
 import random
 
-def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRating):
+
+def generateLikedDislikedDictionary(usersIDs, queryIDs, utilityMatrix, averageRating):
     # Dictionary of users and their liked and disliked queries
     userQueryLikedDict = {key: [] for key in usersIDs}
     userQueryDislikedDict = {key: [] for key in usersIDs}
@@ -10,17 +10,18 @@ def generateLikedDislikeDictionary(usersIDs, queryIDs, utilityMatrix, averageRat
     queryUserLikedDict = {key: [] for key in queryIDs}
     queryUserDislikedDict = {key: [] for key in queryIDs}
 
-    for row in utilityMatrix:
-        currentUser = row[0]
-        for rating, currentQuery in zip(row[1:], queryIDs):
+    for userId, ratings in utilityMatrix.items():
+        for queryId, rating in ratings.items():
             # Check if the user has rated the query
             if(rating):
-                if(rating >= averageRating[currentUser]):
-                    userQueryLikedDict[currentUser].append(queryIDs[currentQuery])
-                    queryUserLikedDict[currentQuery].append(currentUser)
+                # Check if the user has liked or disliked the query by comparing
+                # the rating to the average rating of the user
+                if(rating >= averageRating[userId]):
+                    userQueryLikedDict[userId].append(queryId)
+                    queryUserLikedDict[queryId].append(userId)
                 else:
-                    userQueryDislikedDict[currentUser].append(queryIDs[currentQuery])
-                    queryUserDislikedDict[currentQuery].append(currentUser)
+                    userQueryDislikedDict[userId].append(queryId)
+                    queryUserDislikedDict[queryId].append(userId)
 
     return (
         userQueryLikedDict,
