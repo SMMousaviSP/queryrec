@@ -87,6 +87,7 @@ def queryBasedCF(utilityMatrix, queriesToPredict, querySimilarity, topNQueries):
     # Dictionary of users and their predicted ratings along with the similarity
     # values of the similar queries used in prediction
     predictedRatings = {}
+    notAbleToPredict = 0
     for user, queries in queriesToPredict.items():
         for query in queries:
             # Getting the similar queries to the `query` we are predicting
@@ -138,6 +139,15 @@ def queryBasedCF(utilityMatrix, queriesToPredict, querySimilarity, topNQueries):
                 # create a new dictionary for them
                 except KeyError:
                     predictedRatings[user] = {query: (prediction, listOfSimilarities)}
+            else:
+                notAbleToPredict += 1
+                try:
+                    predictedRatings[user][query] = (-1, [0] * topNQueries)
+                # If it is the first time we are saving a prediction for the user,
+                # create a new dictionary for them
+                except KeyError:
+                    predictedRatings[user] = {query: (-1, [0] * topNQueries)}
+    print(f"Not able to predict {notAbleToPredict} ratings")
     return predictedRatings
 
 
@@ -145,6 +155,7 @@ def userBasedCF(utilityMatrix, queriesToPredict, userSimilarity, topNUsers):
     # Dictionary of users and their predicted ratings along with the similarity
     # values of the similar queries used in prediction
     predictedRatings = {}
+    notAbleToPredict = 0
     for user, queries in queriesToPredict.items():
         for query in queries:
             # Getting the similar users to the `user`
@@ -196,4 +207,13 @@ def userBasedCF(utilityMatrix, queriesToPredict, userSimilarity, topNUsers):
                 # create a new dictionary for them
                 except KeyError:
                     predictedRatings[user] = {query: (prediction, listOfSimilarities)}
+            else:
+                notAbleToPredict += 1
+                try:
+                    predictedRatings[user][query] = (-1, [0] * topNUsers)
+                # If it is the first time we are saving a prediction for the user,
+                # create a new dictionary for them
+                except KeyError:
+                    predictedRatings[user] = {query: (-1, [0] * topNUsers)}
+    print(f"Not able to predict {notAbleToPredict} ratings")
     return predictedRatings
