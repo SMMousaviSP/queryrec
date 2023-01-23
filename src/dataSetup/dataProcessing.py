@@ -109,8 +109,9 @@ def queryBasedCF(utilityMatrix, queriesToPredict, querySimilarity, topNQueries):
             for similarQuery, similarity in sortedSimilarQueries:
                 # Getting the user's rating for the similar query
                 rating = utilityMatrix[user][similarQuery]
-                # If the user has rated the similar query, use it to predict the rating
-                if(rating):
+                # If the user has rated the similar query, and similarity is
+                # greater than zero, use it to predict the rating
+                if(rating and similarity):
                     weightedSum += similarity * rating
                     sumOfWeights += similarity
                     listOfSimilarities.append(similarity)
