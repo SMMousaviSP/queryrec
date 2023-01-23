@@ -96,7 +96,11 @@ def queryBasedCF(utilityMatrix, queriesToPredict, querySimilarity, topNQueries):
             except KeyError:
                 continue
             # Sorting the similar queries by their similarity
-            sortedSimilarQueries = sorted(similarQueries.items(), key=lambda x: x[1], reverse=True)
+            sortedSimilarQueries = sorted(
+                similarQueries.items(),
+                key=lambda x: x[1],
+                reverse=True
+            )
 
             foundedSimilarQueries = 0
             # List of similarity values of the similar queries used in prediction,
