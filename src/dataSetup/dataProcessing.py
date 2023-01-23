@@ -136,66 +136,59 @@ def queryBasedCF(utilityMatrix, queriesToPredict, querySimilarity, topNQueries):
     return predictedRatings
 
 
-def userBasedCF(utilityMatrix, queriesToPredict, usersSimilarity, usersIDs, topNusers, averageRating): 
-    #first id of the userSet
-    baseline = int(min(usersIDs))
+def userBasedCF(utilityMatrix, queriesToPredict, userSimilarity, topNUsers):
+    # Dictionary of users and their predicted ratings along with the similarity
+    # values of the similar queries used in prediction
+    predictedRatings = {}
+    for user, queries in queriesToPredict.items():
+        for query in queries:
+            # Getting the similar users to the `user`
+            try:
+                similarUsers = userSimilarity[user]
+            # If the user is not in the dictionary, it means it has no similar users
+            except KeyError:
+                continue
+            # Sorting the similar users by their similarity
+            sortedSimilarUsers = sorted(
+                similarUsers.items(),
+                key=lambda x: x[1],
+                reverse=True
+            )
 
-    #for all the users with queries to predict(in our case all users)
-    for user in queriesToPredict:
-
-        #check if user some queries that need prediction
-        if(len(queriesToPredict[user]) > 0):
-
-            #get index of the N most similar users
-            topNindexes = sorted(range(len(usersSimilarity[user - baseline])), key = lambda sub: usersSimilarity[sub])[-topNusers:]
-            #print(f'similarity: {usersSimilarity[user - baseline]}\n')
-            #print(f'top indexes: {topNindexes}\n')
-            #print(f'query to predict: {queriesToPredict[user]}\n')
-            #for each query to predict per user
-            for query in queriesToPredict[user]:
-
-                #make new suggestion
-                suggestedResult = 0
-                #new users make a new weight sum
-                weightsSum = 0
-
-                #loop on top N similar users
-                for similarIndex in topNindexes:
-                    #take the weighted average of the results of the other users
-                    #suggestion = similarity(weight) * rating of the user 
-                    #query + 1 as we have the id and we suppose the queries are ordered in the matrix and first column(0) is for user id so query 0 is in index 1 
-                    weight = usersSimilarity[user - baseline][similarIndex]
-                    rating = utilityMatrix[similarIndex][query +1]
-
-                    #print(f'weight: {weight}\n')
-
-                    if(rating != ''):
-                        #print(f'rating: {rating}\nsimilarity: {weight}\nuserIndex: {similarIndex}\nuser: {user}\nqueryID: {query}\n')
-                        suggestedResult += weight * int(rating)
-                    
-                        weightsSum += weight
-
-                
-                #get the weighted average as suggestion
-                #if there is at least a similar user that rated the query calculate it
-                if(weightsSum > 0):
-                    #print('why would i be here?')
-                    #print(f'query: {query}\nMainUserID: {user}\ntotal: {suggestedResult}\ntotalWeight: {weightsSum}\n')
-                    suggestedResult /= weightsSum
-                    utilityMatrix[user - baseline][query + 1] = int(suggestedResult)
-
-                #if no similar user has rated the query and we know the average of the user, use that to predict the rating
-                elif(averageRating[user - baseline] > 0):
-                    #print('made the average\n')
-                    #print(f'query: {query}\nMainUserID: {user}\ntotal: {suggestedResult}\ntotalWeight: {weightsSum}\n')
-                    utilityMatrix[user - baseline][query + 1] = averageRating[user - baseline]
-
-
-                #if user has never rated any query, has average = -1, and if no similar user has rated the query, we use the random value approach
-                else:
-                    #print('random value')
-                    #print(f'query: {query}\nMainUserID: {user}\ntotal: {suggestedResult}\ntotalWeight: {weightsSum}\n')
-                    utilityMatrix[user - baseline][query + 1] = random.randint(0,100)
-                    #should update the average of the user, but not sure if worth it
-
-    return utilityMatrix
+            foundedSimilarUsers = 0
+            # List of similarity values of the similar users used in prediction,
+            # we use this list later on to know how reliable the prediction is and
+            # compare it to other prediction methods
+            listOfSimilarities = []
+            weightedSum = 0
+            sumOfWeights = 0
+            # Getting the top N similar users
+            for similarUser, similarity in sortedSimilarUsers:
+                # Getting the query's rating from the similar user
+                rating = utilityMatrix[similarUser][query]
+                # If the similar user has rated the query and the similarity of
+                # similar user is greater than 0, use it to predict the rating
+                if(rating and similarity):
+                    weightedSum += similarity * rating
+                    sumOfWeights += similarity
+                    listOfSimilarities.append(similarity)
+                    foundedSimilarUsers += 1
+                # If we have found the top N similar queries, stop searching
+                if(foundedSimilarUsers == topNUsers):
+                    break
+            # If we were able to find at least one similar query, predict the rating
+            if(foundedSimilarUsers > 0):
+                # Check if we were able to find top N similar queries, otherwise fill
+                # list of similarities with zeros, this is done so that we can compare
+                # the prediction with other prediction methods. The more zeros we have
+                # in the list, the less reliable the prediction is.
+                if(foundedSimilarUsers < topNUsers):
+                    listOfSimilarities += [0] * (topNUsers - foundedSimilarUsers)
+                prediction = weightedSum / sumOfWeights
+                try:
+                    predictedRatings[user][query] = (prediction, listOfSimilarities)
+                # If it is the first time we are saving a prediction for the user,
+                # create a new dictionary for them
+                except KeyError:
+                    predictedRatings[user] = {query: (prediction, listOfSimilarities)}
+    return predictedRatings
