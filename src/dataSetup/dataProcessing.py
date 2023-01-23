@@ -100,7 +100,7 @@ def queryBasedCF(utilityMatrix, queriesToPredict, querySimilarity, topNQueries):
                 similarQueries.items(),
                 key=lambda x: x[1],
                 reverse=True
-            )
+            )[1:] # Removing the query itself from the list
 
             foundedSimilarQueries = 0
             # List of similarity values of the similar queries used in prediction,
@@ -158,7 +158,7 @@ def userBasedCF(utilityMatrix, queriesToPredict, userSimilarity, topNUsers):
                 similarUsers.items(),
                 key=lambda x: x[1],
                 reverse=True
-            )
+            )[1:] # Removing the user itself from the list
 
             foundedSimilarUsers = 0
             # List of similarity values of the similar users used in prediction,
