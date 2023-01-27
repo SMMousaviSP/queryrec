@@ -1,6 +1,8 @@
 import csv
 import os
 
+import pandas as pd
+
 
 DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data'))
 
@@ -17,6 +19,7 @@ def loadUserSet(userSetPath=os.path.join(DATA_PATH, 'Smalldataset', 'userSet.csv
 
     return usersIDs
 
+
 def loadQueryIds(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
     queryIDs = []
     with open(utilityMatrixPath, 'r', newline='') as utilityMatrixFile:
@@ -25,6 +28,7 @@ def loadQueryIds(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'util
         queryIDs = header
 
     return [int(i) for i in queryIDs]
+
 
 def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
     queryIDs = []
@@ -59,3 +63,13 @@ def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 
             }
 
         return queryIDs, utilityMatrix, average
+
+
+def getUniqueValues(datasetPath=os.path.join(DATA_PATH, 'Smalldataset', 'usersData.csv')):
+    # Get unique values for each column with their number of occurrences
+    df = pd.read_csv(datasetPath)
+    uniqueValues = {}
+    for column in df.columns:
+        if column != 'id':
+            uniqueValues[column] = df[column].value_counts().to_dict()
+    return uniqueValues
