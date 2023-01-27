@@ -73,3 +73,20 @@ def getUniqueValues(datasetPath=os.path.join(DATA_PATH, 'Smalldataset', 'usersDa
         if column != 'id':
             uniqueValues[column] = df[column].value_counts().to_dict()
     return uniqueValues
+
+
+def loadQuerySet(querySetPath=os.path.join(DATA_PATH, 'Smalldataset', 'querySet.csv')):
+    queries = {}
+    with open(querySetPath, 'r') as querySetFile:
+        reader = csv.reader(querySetFile, delimiter=',')
+        for query in reader:
+            # Empty query? Move on
+            if len(query) < 2:
+                continue
+            id = query[0]
+            content = query[1:]
+            queries[id] = {
+                condition: value
+                for condition, value in map(lambda x: x.split("="), content)
+            }
+    return queries
