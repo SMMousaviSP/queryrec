@@ -37,7 +37,7 @@ def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 
     with open(utilityMatrixPath, 'r', newline='') as utilityMatrixFile:
         reader = csv.reader(utilityMatrixFile, delimiter=',')
         header = next(reader)
-        queryIDs = [int(i) for i in header[1:]]
+        queryIDs = header[1:]
 
         for row in reader:
             userAverage = 0
