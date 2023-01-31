@@ -1,4 +1,4 @@
-import random
+import copy
 
 
 def generateLikedDislikedDictionary(usersIDs, queryIDs, utilityMatrix, averageRating):
@@ -219,3 +219,13 @@ def userBasedCF(utilityMatrix, queriesToPredict, userSimilarity, topNUsers, fill
                     predictedRatings[user] = {query: (prediction, [0] * topNUsers)}
     print(f"Not able to predict {notAbleToPredict} ratings")
     return predictedRatings
+
+
+def fillUtilityMatrix(utilityMatrix, predictions, inplace=False):
+    if not inplace:
+        utilityMatrix = copy.deepcopy(utilityMatrix)
+    for user, queries in predictions.items():
+        for query, (prediction, _) in queries.items():
+            utilityMatrix[user][query] = prediction
+    if not inplace:
+        return utilityMatrix
