@@ -68,8 +68,18 @@ def calculateGeneralUtility(query, utilityMatrix, queries, uniqueValues):
             queryId, sameConditionQuery = list(sameCondition.items())[0]
             minimumCount = findMinimumCount(sameConditionQuery, uniqueValues)
             if minimumCount != -1:
-                single_weight += minimumCount
-                single_utility += averageQueryRating(queryId, utilityMatrix) * minimumCount
-        utility += single_utility / single_weight
-        weight += 1
-    return utility / weight
+                single_weight += minimumCount / len(sameConditionQuery)
+                single_utility += (
+                    averageQueryRating(queryId, utilityMatrix)
+                    *
+                    # This is the weight of the query. It is divided by the
+                    # number of conditions in the query to make sure that
+                    # the weight of a query with more conditions is lower
+                    (minimumCount / len(sameConditionQuery))
+                )
+        if single_weight != 0:
+            utility += single_utility / single_weight
+            weight += 1
+    if weight != 0:
+        return utility / weight
+    return -1
