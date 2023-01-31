@@ -235,3 +235,9 @@ def topKQueriesNotPosed(predictions, userId, k):
     user_predictions = predictions[userId]
     sorted_predictions = sorted(user_predictions.items(), key=lambda x: x[1][0], reverse=True)[:k]
     return [(query, prediction) for query, (prediction, _) in sorted_predictions]
+
+
+def topKQueriesFromUtilityMatrix(utilityMatrix, userId, k):
+    user_ratings = utilityMatrix[userId]
+    sorted_ratings = sorted(user_ratings.items(), key=lambda x: x[1], reverse=True)[:k]
+    return [(query, rating) for query, rating in sorted_ratings]
