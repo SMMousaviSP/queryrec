@@ -15,7 +15,7 @@ def loadUserSet(userSetPath=os.path.join(DATA_PATH, 'Smalldataset', 'userSet.csv
     with open(userSetPath, 'r', newline='') as userSetFile:
         reader = csv.reader(userSetFile, delimiter=',')
         for id in reader:
-            usersIDs.append(int(id[0]))
+            usersIDs.append(id[0])
 
     return usersIDs
 
@@ -27,7 +27,7 @@ def loadQueryIds(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'util
         header = next(reader)
         queryIDs = header
 
-    return [int(i) for i in queryIDs]
+    return queryIDs
 
 
 def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 'utilityMatrix.csv')):
@@ -43,7 +43,7 @@ def loadUtilityMatrix(utilityMatrixPath=os.path.join(DATA_PATH, 'Smalldataset', 
             userAverage = 0
             values = 0
             # convert ratings to int or None if there is no rating
-            row = [int_or_none(i) for i in row]
+            row = [row[0]] + [int_or_none(i) for i in row[1:]]
             currentUserId = row[0]
             ratings = row[1:]
             for rating in ratings:
