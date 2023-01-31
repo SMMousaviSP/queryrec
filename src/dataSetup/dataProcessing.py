@@ -229,3 +229,9 @@ def fillUtilityMatrix(utilityMatrix, predictions, inplace=False):
             utilityMatrix[user][query] = prediction
     if not inplace:
         return utilityMatrix
+
+
+def topKQueriesNotPosed(predictions, userId, k):
+    user_predictions = predictions[userId]
+    sorted_predictions = sorted(user_predictions.items(), key=lambda x: x[1][0], reverse=True)[:k]
+    return [(query, prediction) for query, (prediction, _) in sorted_predictions]
