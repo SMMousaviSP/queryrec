@@ -1,5 +1,5 @@
 # Query Recommendation System
-This is a query recommendation system using Jaccard Similarity and collaborative filtering to recommend queries to users based on the previous rated queries. Also a solution is provided to rate a query generally for all users.
+This is a query recommendation system using Jaccard Similarity and collaborative filtering to recommend queries to users based on the previous rated queries. Also a solution is provided to rate a query generally for all users. This project was done as part of the course "Data Mining" at the University of Trento by [Seyed Mohammad Mousavi](https://github.com/SMMousaviSP) and [Omar Facchini](https://github.com/OmarFacchini). You can find the report of the project in the `report` folder or simply by clicking [here](https://github.com/SMMousaviSP/queryrec/blob/main/report/Query_Recommendation_System.pdf).
 
 ## Managing the Environment and Dependencies
 To start working, first install `virtualenv` with pip.
